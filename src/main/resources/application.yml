@@ -1,0 +1,69 @@
+spring:
+  profiles:
+    active: h2
+  data:
+    rest:
+      basePath: /api
+      max-page-size: 20
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always # only for convenience
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:proxy_db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+  h2:
+    console:
+      enabled: true
+  flyway:
+    url: jdbc:h2:mem:proxy_db
+    user: sa
+    password: sa
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: psql
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://db:5432/proxy_db}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:sa}
+  flyway:
+    url: ${DB_URL:jdbc:postgresql://db:5432/proxy_db}
+    user: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:sa}
+    default-schema: ${DB_SCHEMA:proxy_db}
+    schemas:
+      - ${DB_SCHEMA:proxy_db}
+  jpa:
+    properties:
+      hibernate:
+        default-schema: ${DB_SCHEMA:proxy_db}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  sql:
+    init:
+      mode: never

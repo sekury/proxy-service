@@ -1,0 +1,13 @@
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY1', 'HTTP', 'host1', 3000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY2', 'HTTP', 'host2', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY3', 'HTTP', 'host3', 7000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY4', 'HTTP', 'host4', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY5', 'HTTP', 'host5', 3000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY6', 'HTTP', 'host6', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY7', 'HTTP', 'host7', 7000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY8', 'HTTP', 'host8', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY9', 'HTTP', 'host9', 3000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY10', 'HTTP', 'host10', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY11', 'HTTP', 'host11', 7000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY12', 'HTTP', 'host12', 9000, 'admin', 'pswd!', TRUE);
+INSERT INTO proxy (name, type, hostname, port, username, password, active) VALUES ('PROXY13', 'HTTP', 'host13', 3000, 'admin', 'pswd!', TRUE);
