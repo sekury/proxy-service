@@ -1,10 +1,6 @@
 spring:
   profiles:
     active: h2
-  data:
-    rest:
-      basePath: /api
-      max-page-size: 20
   flyway:
     enabled: true
   jpa:

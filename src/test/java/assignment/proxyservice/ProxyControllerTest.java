@@ -132,33 +132,33 @@ public class ProxyControllerTest {
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
     void findByNameOrTypeTest() throws Exception {
-        mvc.perform(get("/api/proxies/search/findByNameOrType")
+        mvc.perform(get("/api/proxies/search")
                         .param("name", "PROXY1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.proxies.length()", equalTo(1)))
-                .andExpect(jsonPath("$._embedded.proxies[0].name", equalTo("PROXY1")))
+                .andExpect(jsonPath("$.length()", equalTo(1)))
+                .andExpect(jsonPath("$.[0].name", equalTo("PROXY1")))
                 .andDo(print());
 
-        mvc.perform(get("/api/proxies/search/findByNameOrType")
+        mvc.perform(get("/api/proxies/search")
                         .param("type", "HTTPS")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.proxies.length()", equalTo(6)))
-                .andExpect(jsonPath("$._embedded.proxies[0].name", equalTo("PROXY2")))
-                .andExpect(jsonPath("$._embedded.proxies[1].name", equalTo("PROXY4")))
-                .andExpect(jsonPath("$._embedded.proxies[2].name", equalTo("PROXY6")))
-                .andExpect(jsonPath("$._embedded.proxies[3].name", equalTo("PROXY8")))
-                .andExpect(jsonPath("$._embedded.proxies[4].name", equalTo("PROXY10")))
-                .andExpect(jsonPath("$._embedded.proxies[5].name", equalTo("PROXY12")))
+                .andExpect(jsonPath("$.length()", equalTo(6)))
+                .andExpect(jsonPath("$.[0].name", equalTo("PROXY2")))
+                .andExpect(jsonPath("$.[1].name", equalTo("PROXY4")))
+                .andExpect(jsonPath("$.[2].name", equalTo("PROXY6")))
+                .andExpect(jsonPath("$.[3].name", equalTo("PROXY8")))
+                .andExpect(jsonPath("$.[4].name", equalTo("PROXY10")))
+                .andExpect(jsonPath("$.[5].name", equalTo("PROXY12")))
                 .andDo(print());
 
-        mvc.perform(get("/api/proxies/search/findByNameOrType")
+        mvc.perform(get("/api/proxies/search")
                         .param("name", "PROXY1")
                         .param("type", "HTTPS")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.proxies.length()", equalTo(7)))
+                .andExpect(jsonPath("$.length()", equalTo(7)))
                 .andDo(print());
     }
 }
