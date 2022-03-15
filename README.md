@@ -1,4 +1,4 @@
-# Proxy service
+# Proxy service [![Java CI with Gradle](https://github.com/sekury/proxy-service/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/sekury/proxy-service/actions/workflows/gradle.yml) ![Coverage](.github/badges/jacoco.svg) ![Branches](.github/badges/branches.svg)
 Service provides CRUD operations with proxy entity.
 
 There are two approaches used:
@@ -13,7 +13,7 @@ There are two approaches used:
 
 ### Disclaimer
 
-Since `./gradlew bootBuildImage` doesn't provide jdk14, I've been forced to use custom .Dockerfile  
+Since `./gradlew bootBuildImage` doesn't provide jdk14, I've been forced to use custom Dockerfile  
 
 ## Test with swagger
 [Swagger](http://localhost:8080/swagger-ui/index.html#/)
