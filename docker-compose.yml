@@ -4,7 +4,7 @@ services:
   app:
     depends_on:
       - db
-    image: proxy-service
+    image: proxy-service:latest
     build:
       context: .
     container_name: app
