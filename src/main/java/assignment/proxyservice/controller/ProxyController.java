@@ -1,7 +1,7 @@
 package assignment.proxyservice.controller;
 
 import assignment.proxyservice.domain.ProxyType;
-import assignment.proxyservice.model.ProxyDto;
+import assignment.proxyservice.dto.ProxyDto;
 import assignment.proxyservice.service.ProxyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

@@ -11,6 +11,9 @@ spring:
 logbook:
   include: /api/**
   strategy: default
+#  exclude:
+#    - /h2-console
+#    - /h2-console/**
 
 logging:
   level:

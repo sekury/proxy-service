@@ -1,7 +1,7 @@
 package assignment.proxyservice.mappers;
 
 import assignment.proxyservice.domain.Proxy;
-import assignment.proxyservice.model.ProxyDto;
+import assignment.proxyservice.dto.ProxyDto;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 

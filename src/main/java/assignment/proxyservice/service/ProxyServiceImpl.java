@@ -5,7 +5,7 @@ import assignment.proxyservice.domain.ProxyType;
 import assignment.proxyservice.exception.ProxyConflictException;
 import assignment.proxyservice.exception.ProxyNotFoundException;
 import assignment.proxyservice.mappers.ProxyMapper;
-import assignment.proxyservice.model.ProxyDto;
+import assignment.proxyservice.dto.ProxyDto;
 import assignment.proxyservice.repository.ProxyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

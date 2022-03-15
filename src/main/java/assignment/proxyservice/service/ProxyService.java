@@ -1,7 +1,7 @@
 package assignment.proxyservice.service;
 
 import assignment.proxyservice.domain.ProxyType;
-import assignment.proxyservice.model.ProxyDto;
+import assignment.proxyservice.dto.ProxyDto;
 
 import java.util.List;
 
