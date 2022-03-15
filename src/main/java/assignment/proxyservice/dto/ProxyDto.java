@@ -1,4 +1,4 @@
-package assignment.proxyservice.model;
+package assignment.proxyservice.dto;
 
 import assignment.proxyservice.domain.ProxyType;
 import com.fasterxml.jackson.annotation.JsonProperty;

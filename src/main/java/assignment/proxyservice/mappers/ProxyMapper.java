@@ -1,7 +1,7 @@
 package assignment.proxyservice.mappers;
 
 import assignment.proxyservice.domain.Proxy;
-import assignment.proxyservice.model.ProxyDto;
+import assignment.proxyservice.dto.ProxyDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
