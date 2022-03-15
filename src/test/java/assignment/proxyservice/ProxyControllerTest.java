@@ -4,15 +4,22 @@ import assignment.proxyservice.domain.Proxy;
 import assignment.proxyservice.domain.ProxyType;
 import assignment.proxyservice.repository.ProxyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,11 +27,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles({"test"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles({"it"})
 public class ProxyControllerTest {
+
+    @Container
+    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.2-alpine")
+            .withDatabaseName("proxy_db")
+            .withUsername("sa")
+            .withPassword("sa")
+            .waitingFor(Wait.forListeningPort());
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.username", container::getUsername);
+        registry.add("spring.datasource.password", container::getPassword);
+        registry.add("spring.flyway.url", container::getJdbcUrl);
+        registry.add("spring.flyway.user", container::getUsername);
+        registry.add("spring.flyway.password", container::getPassword);
+    }
 
     @Autowired
     ProxyRepository proxyRepository;
@@ -35,29 +59,38 @@ public class ProxyControllerTest {
     @Autowired
     MockMvc mvc;
 
+    @BeforeEach
+    public void cleanDB() {
+        proxyRepository.deleteAll();
+    }
+
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
     void getAllProxiesTest() throws Exception {
         final var lengthPath = "$.length()";
 
+        var proxy1 = createProxy("proxy1", "host1", ProxyType.HTTP);
+        var proxy2 = createProxy("proxy2", "host2", ProxyType.HTTP);
+        var proxy3 = createProxy("proxy3", "host3", ProxyType.HTTP);
+        proxyRepository.saveAll(Arrays.asList(proxy1, proxy2, proxy3));
+
         mvc.perform(get("/api/proxies").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(lengthPath, equalTo(13)))
+                .andExpect(jsonPath(lengthPath, equalTo(3)))
                 .andDo(print());
 
         mvc.perform(get("/api/proxies?page=0").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(lengthPath, equalTo(13)))
-                .andDo(print());
-
-        mvc.perform(get("/api/proxies?page=0&size=10").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath(lengthPath, equalTo(10)))
-                .andDo(print());
-
-        mvc.perform(get("/api/proxies?page=1&size=10").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
                 .andExpect(jsonPath(lengthPath, equalTo(3)))
+                .andDo(print());
+
+        mvc.perform(get("/api/proxies?page=0&size=2").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(lengthPath, equalTo(2)))
+                .andDo(print());
+
+        mvc.perform(get("/api/proxies?page=1&size=2").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(lengthPath, equalTo(1)))
                 .andDo(print());
     }
 
@@ -80,10 +113,11 @@ public class ProxyControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
     void postProxyFailTest() throws Exception {
+        proxyRepository.save(createProxy("proxy1", "host1", ProxyType.HTTP));
+
         var proxy = new Proxy();
-        proxy.setName("PROXY1");
+        proxy.setName("proxy1");
         proxy.setType(ProxyType.HTTP);
         proxy.setHostname("newhost");
 
@@ -96,11 +130,12 @@ public class ProxyControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
     void getProxyByIdSuccessTest() throws Exception {
-        mvc.perform(get("/api/proxies/1").accept(MediaType.APPLICATION_JSON))
+        var proxy1 = proxyRepository.save(createProxy("proxy1", "host1", ProxyType.HTTP));
+
+        mvc.perform(get("/api/proxies/" + proxy1.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("PROXY1")))
+                .andExpect(jsonPath("$.name", equalTo("proxy1")))
                 .andDo(print());
     }
 
@@ -112,14 +147,15 @@ public class ProxyControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
-    void putProxyTest() throws Exception {
+    void putProxySuccessTest() throws Exception {
+        var proxy1 = proxyRepository.save(createProxy("proxy1", "host1", ProxyType.HTTP));
+
         final var proxy = new Proxy();
         proxy.setName("newProxy");
         proxy.setType(ProxyType.HTTP);
         proxy.setHostname("newhost");
 
-        mvc.perform(put("/api/proxies/1")
+        mvc.perform(put("/api/proxies/" + proxy1.getId())
                         .content(objectMapper.writeValueAsString(proxy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -128,14 +164,16 @@ public class ProxyControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
     void putProxyConflictFailTest() throws Exception {
+        var proxy1 = proxyRepository.save(createProxy("proxy1", "host1", ProxyType.HTTP));
+        var proxy2 = proxyRepository.save(createProxy("proxy2", "host2", ProxyType.HTTP));
+
         final var proxy = new Proxy();
-        proxy.setName("PROXY2");
+        proxy.setName("proxy2");
         proxy.setType(ProxyType.HTTP);
         proxy.setHostname("newhost");
 
-        mvc.perform(put("/api/proxies/1")
+        mvc.perform(put("/api/proxies/" + proxy1.getId())
                         .content(objectMapper.writeValueAsString(proxy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -159,17 +197,12 @@ public class ProxyControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
-    void deleteProxyTest() throws Exception {
-        mvc.perform(delete("/api/proxies/1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andDo(print());
-    }
-
-    @Test
-    @Sql(scripts = {"/insert_proxies.sql"})
     void findByNameOrTypeTest() throws Exception {
+        var proxy1 = createProxy("proxy1", "host1", ProxyType.HTTP);
+        var proxy2 = createProxy("proxy2", "host2", ProxyType.HTTP);
+        var proxy3 = createProxy("proxy3", "host3", ProxyType.HTTPS);
+        proxyRepository.saveAll(Arrays.asList(proxy1, proxy2, proxy3));
+
         // empty search
         mvc.perform(get("/api/proxies/search")
                         .accept(MediaType.APPLICATION_JSON))
@@ -179,34 +212,48 @@ public class ProxyControllerTest {
 
         // search by name
         mvc.perform(get("/api/proxies/search")
-                        .param("name", "PROXY1")
+                        .param("name", "proxy1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", equalTo(1)))
-                .andExpect(jsonPath("$.[0].name", equalTo("PROXY1")))
+                .andExpect(jsonPath("$.[0].name", equalTo("proxy1")))
                 .andDo(print());
 
         // search by type
         mvc.perform(get("/api/proxies/search")
-                        .param("type", "HTTPS")
+                        .param("type", "HTTP")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", equalTo(6)))
-                .andExpect(jsonPath("$.[0].name", equalTo("PROXY2")))
-                .andExpect(jsonPath("$.[1].name", equalTo("PROXY4")))
-                .andExpect(jsonPath("$.[2].name", equalTo("PROXY6")))
-                .andExpect(jsonPath("$.[3].name", equalTo("PROXY8")))
-                .andExpect(jsonPath("$.[4].name", equalTo("PROXY10")))
-                .andExpect(jsonPath("$.[5].name", equalTo("PROXY12")))
+                .andExpect(jsonPath("$.length()", equalTo(2)))
+                .andExpect(jsonPath("$.[0].name", equalTo("proxy1")))
+                .andExpect(jsonPath("$.[1].name", equalTo("proxy2")))
                 .andDo(print());
 
         // search both name and type
         mvc.perform(get("/api/proxies/search")
-                        .param("name", "PROXY1")
+                        .param("name", "proxy1")
                         .param("type", "HTTP")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", equalTo(1)))
                 .andDo(print());
+    }
+
+    @Test
+    void deleteProxyTest() throws Exception {
+        var proxy1 = proxyRepository.save(createProxy("proxy1", "host1", ProxyType.HTTP));
+
+        mvc.perform(delete("/api/proxies/" + proxy1.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    private static Proxy createProxy(String name, String host, ProxyType type) {
+        var proxy = new Proxy();
+        proxy.setName(name);
+        proxy.setHostname(host);
+        proxy.setType(type);
+        return proxy;
     }
 }

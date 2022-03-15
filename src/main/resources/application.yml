@@ -71,3 +71,19 @@ spring:
   sql:
     init:
       mode: never
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: it
+  flyway:
+    default-schema: proxy_db
+    schemas:
+      - proxy_db
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    properties:
+      hibernate:
+        default_schema: proxy_db
