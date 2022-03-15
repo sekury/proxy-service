@@ -8,6 +8,13 @@ spring:
       ddl-auto: none
     open-in-view: false
 
+logbook:
+  include: /api/**
+  strategy: default
+
+logging:
+  level:
+    org.zalando.logbook: trace
 ---
 
 spring:

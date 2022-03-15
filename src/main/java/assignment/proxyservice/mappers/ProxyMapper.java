@@ -11,10 +11,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProxyMapper {
-    @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "password", ignore = true)
     ProxyDto proxyToProxyDto(Proxy proxy);
 
-    @Mapping(target = "password", ignore = true)
+    @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
     Proxy proxyDtoToProxy(ProxyDto dto);
 
     List<ProxyDto> map(List<Proxy> proxies);
