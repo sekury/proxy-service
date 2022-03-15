@@ -97,10 +97,17 @@ public class ProxyControllerTest {
 
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
-    void getProxyByIdTest() throws Exception {
+    void getProxyByIdSuccessTest() throws Exception {
         mvc.perform(get("/api/proxies/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("PROXY1")))
+                .andDo(print());
+    }
+
+    @Test
+    void getProxyByIdFailTest() throws Exception {
+        mvc.perform(get("/api/proxies/1").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -122,6 +129,37 @@ public class ProxyControllerTest {
 
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
+    void putProxyConflictFailTest() throws Exception {
+        final var proxy = new Proxy();
+        proxy.setName("PROXY2");
+        proxy.setType(ProxyType.HTTP);
+        proxy.setHostname("newhost");
+
+        mvc.perform(put("/api/proxies/1")
+                        .content(objectMapper.writeValueAsString(proxy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andDo(print());
+    }
+
+    @Test
+    void putProxyNotFoundFailTest() throws Exception {
+        final var proxy = new Proxy();
+        proxy.setName("newProxy");
+        proxy.setType(ProxyType.HTTP);
+        proxy.setHostname("newhost");
+
+        mvc.perform(put("/api/proxies/1")
+                        .content(objectMapper.writeValueAsString(proxy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @Sql(scripts = {"/insert_proxies.sql"})
     void deleteProxyTest() throws Exception {
         mvc.perform(delete("/api/proxies/1")
                         .accept(MediaType.APPLICATION_JSON))
@@ -132,6 +170,13 @@ public class ProxyControllerTest {
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
     void findByNameOrTypeTest() throws Exception {
+        // empty search
+        mvc.perform(get("/api/proxies/search")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", equalTo(0)))
+                .andDo(print());
+
         // search by name
         mvc.perform(get("/api/proxies/search")
                         .param("name", "PROXY1")
