@@ -1,7 +1,7 @@
 # Proxy service [![Java CI with Gradle](https://github.com/sekury/proxy-service/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/sekury/proxy-service/actions/workflows/gradle.yml) ![Coverage](.github/badges/jacoco.svg) ![Branches](.github/badges/branches.svg)
 Service provides CRUD operations with proxy entity.
 
-There are two approaches used:
+There are few approaches used:
 1. Spring Web in [master](https://github.com/sekury/proxy-service) branch
 2. Spring Data REST in [data-rest](https://github.com/sekury/proxy-service/tree/data-rest) branch
 3. Testing with [testcontainers](https://github.com/sekury/proxy-service/tree/testcontainers) branch
