@@ -11,5 +11,5 @@ import java.util.List;
 @RepositoryRestResource
 public interface ProxyRepository extends PagingAndSortingRepository<Proxy, Long> {
 
-    List<Proxy> findByNameOrType(@Param("name") String name, @Param("type") ProxyType type);
+    List<Proxy> findByNameAndType(@Param("name") String name, @Param("type") ProxyType type);
 }

@@ -56,7 +56,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        default-schema: ${DB_SCHEMA:proxy_db}
+        default_schema: ${DB_SCHEMA:proxy_db}
 
 ---
 
