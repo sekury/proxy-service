@@ -6,9 +6,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-  sql:
-    init:
-      mode: always # only for convenience
+    open-in-view: false
 
 ---
 
@@ -30,6 +28,9 @@ spring:
     password: sa
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+  sql:
+    init:
+      mode: always # only for convenience
 
 ---
 
@@ -52,7 +53,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        default-schema: ${DB_SCHEMA:proxy_db}
+        default_schema: ${DB_SCHEMA:proxy_db}
 
 ---
 

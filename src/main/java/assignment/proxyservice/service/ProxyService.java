@@ -13,4 +13,8 @@ public interface ProxyService {
     List<ProxyDto> searchProxies(String name, ProxyType type);
 
     ProxyDto createProxy(ProxyDto dto);
+
+    ProxyDto updateProxy(long id, ProxyDto dto);
+
+    void deleteProxy(long id);
 }

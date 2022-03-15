@@ -11,6 +11,7 @@ import javax.validation.constraints.*;
 @Setter
 public class ProxyDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotEmpty
@@ -22,17 +23,20 @@ public class ProxyDto {
 
     @NotEmpty
     @Size(max = 120)
+    @Pattern(regexp = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$")
     private String hostname;
 
     @Min(0)
     @Max(65535)
     private Integer port;
 
-    @Size(max = 80)
+    @Size(min = 6, max = 50)
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]+$")
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(max = 80)
+    @Size(min=8, max = 16)
+    @Pattern(regexp = "^[a-zA-Z0-9#?!@$%^&*-]+$")
     private String password;
 
     private Boolean active;

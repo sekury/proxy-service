@@ -28,16 +28,20 @@ class ProxyRepositoryTest {
         Proxy proxy = new Proxy();
         proxy.setName(proxyName);
         proxy.setType(ProxyType.SOCKS4);
-        proxy.setHostname("proxy_host");
-        proxy.setUsername("user");
-        proxy.setPassword("pswd");
+        proxy.setHostname("proxy-host");
 
         entityManager.persist(proxy);
         entityManager.flush();
 
-        assertEquals(1, repository.findByNameOrType(proxyName, ProxyType.SOCKS4).size());
-        assertEquals(1, repository.findByNameOrType(proxyName, ProxyType.HTTPS).size());
-        assertEquals(1, repository.findByNameOrType("wrongName", ProxyType.SOCKS4).size());
-        assertEquals(0, repository.findByNameOrType("wrongName", ProxyType.HTTPS).size());
+        assertEquals(1, repository.findByNameAndType(proxyName, ProxyType.SOCKS4).size());
+        assertEquals(0, repository.findByNameAndType(proxyName, ProxyType.HTTPS).size());
+        assertEquals(0, repository.findByNameAndType("wrongName", ProxyType.SOCKS4).size());
+        assertEquals(0, repository.findByNameAndType("wrongName", ProxyType.HTTPS).size());
+
+        assertEquals(1, repository.findByName(proxyName).size());
+        assertEquals(0, repository.findByName("wrongName").size());
+
+        assertEquals(1, repository.findByType(ProxyType.SOCKS4).size());
+        assertEquals(0, repository.findByType(ProxyType.HTTPS).size());
     }
 }

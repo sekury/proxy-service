@@ -38,7 +38,7 @@ public class ProxyControllerTest {
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
     void getAllProxiesTest() throws Exception {
-        final var lengthPath = "$._embedded.proxies.length()";
+        final var lengthPath = "$.length()";
 
         mvc.perform(get("/api/proxies").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -132,6 +132,7 @@ public class ProxyControllerTest {
     @Test
     @Sql(scripts = {"/insert_proxies.sql"})
     void findByNameOrTypeTest() throws Exception {
+        // search by name
         mvc.perform(get("/api/proxies/search")
                         .param("name", "PROXY1")
                         .accept(MediaType.APPLICATION_JSON))
@@ -140,6 +141,7 @@ public class ProxyControllerTest {
                 .andExpect(jsonPath("$.[0].name", equalTo("PROXY1")))
                 .andDo(print());
 
+        // search by type
         mvc.perform(get("/api/proxies/search")
                         .param("type", "HTTPS")
                         .accept(MediaType.APPLICATION_JSON))
@@ -153,12 +155,13 @@ public class ProxyControllerTest {
                 .andExpect(jsonPath("$.[5].name", equalTo("PROXY12")))
                 .andDo(print());
 
+        // search both name and type
         mvc.perform(get("/api/proxies/search")
                         .param("name", "PROXY1")
-                        .param("type", "HTTPS")
+                        .param("type", "HTTP")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", equalTo(7)))
+                .andExpect(jsonPath("$.length()", equalTo(1)))
                 .andDo(print());
     }
 }
