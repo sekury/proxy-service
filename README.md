@@ -8,6 +8,9 @@ There are few approaches used:
 
 ## Build & Start with docker
 
+Run `make start`
+
+or manually:
 1. Delete image `docker rmi proxy-service`
 2. Build image `./gradlew build`
 3. Launch docker compose `docker-compose up`
