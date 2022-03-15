@@ -4,6 +4,7 @@ Service provides CRUD operations with proxy entity.
 There are two approaches used:
 1. Spring Web in [master](https://github.com/sekury/proxy-service) branch
 2. Spring Data REST in [data-rest](https://github.com/sekury/proxy-service/tree/data-rest) branch
+3. Testing with [testcontainers](https://github.com/sekury/proxy-service/tree/testcontainers) branch
 
 ## Build & Start with docker
 
@@ -13,7 +14,7 @@ There are two approaches used:
 
 ### Disclaimer
 
-Since `./gradlew bootBuildImage` doesn't provide jdk14, I've been forced to use custom Dockerfile  
+Since `./gradlew bootBuildImage` doesn't provide jdk14, I've been forced to use a custom Dockerfile  
 
 ## Test with swagger
 [Swagger](http://localhost:8080/swagger-ui/index.html#/)
