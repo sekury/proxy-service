@@ -1,6 +1,5 @@
 package assignment.proxyservice.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,7 +7,6 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.util.Objects;
 
 @Getter
@@ -24,32 +22,22 @@ public class Proxy {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotEmpty
-    @Size(max = 120)
     @Column(name = "name", nullable = false, unique = true, length = 120)
     private String name;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private ProxyType type;
 
-    @NotEmpty
-    @Size(max = 120)
     @Column(name = "hostname", nullable = false, unique = true, length = 120)
     private String hostname;
 
-    @Min(0)
-    @Max(65535)
     @Column(name = "port")
     private Integer port;
 
-    @Size(max = 80)
     @Column(name = "username", length = 80)
     private String username;
 
-    @JsonIgnore
-    @Size(max = 80)
     @Column(name = "password", length = 80)
     private String password;
 
