@@ -12,7 +12,7 @@ Run `make start`
 
 or manually:
 1. Delete image `docker rmi proxy-service`
-2. Build image `./gradlew build`
+2. Build app `./gradlew build`
 3. Launch docker compose `docker-compose up`
 
 ### Disclaimer
