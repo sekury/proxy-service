@@ -1,4 +1,4 @@
-package assignment.proxyservice;
+package assignment.proxyservice.controller;
 
 import assignment.proxyservice.domain.Proxy;
 import assignment.proxyservice.domain.ProxyType;

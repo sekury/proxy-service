@@ -8,13 +8,6 @@ spring:
       ddl-auto: none
     open-in-view: false
 
-logbook:
-  include: /api/**
-  strategy: default
-#  exclude:
-#    - /h2-console
-#    - /h2-console/**
-
 logging:
   level:
     org.zalando.logbook: trace
@@ -74,3 +67,5 @@ spring:
   sql:
     init:
       mode: never
+  jpa:
+    show-sql: true

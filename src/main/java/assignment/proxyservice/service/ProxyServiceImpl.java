@@ -10,8 +10,12 @@ import assignment.proxyservice.repository.ProxyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,16 +98,38 @@ public class ProxyServiceImpl implements ProxyService {
         repository.deleteById(id);
     }
 
+//    private List<Proxy> findProxyByNameAndType(String name, ProxyType type) {
+//        if (name != null && type != null) {
+//            return repository.findByNameAndType(name, type);
+//        }
+//        if (name != null) {
+//            return repository.findByName(name);
+//        }
+//        if (type != null) {
+//            return repository.findByType(type);
+//        }
+//        return Collections.emptyList();
+//    }
+
     private List<Proxy> findProxyByNameAndType(String name, ProxyType type) {
-        if (name != null && type != null) {
-            return repository.findByNameAndType(name, type);
+        if (!StringUtils.hasLength(name) && type == null) {
+            return Collections.emptyList();
         }
-        if (name != null) {
-            return repository.findByName(name);
-        }
-        if (type != null) {
-            return repository.findByType(type);
-        }
-        return Collections.emptyList();
+        Specification<Proxy> specification = getProxySpecification(name, type);
+        return repository.findAll(specification);
+    }
+
+    private Specification<Proxy> getProxySpecification(String name, ProxyType type) {
+        // implementing optional params
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>(2);
+            if (StringUtils.hasLength(name)) {
+                predicates.add(criteriaBuilder.equal(root.get("name"), name));
+            }
+            if (type != null) {
+                predicates.add(criteriaBuilder.equal(root.get("type"), type));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }
